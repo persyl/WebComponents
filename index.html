@@ -46,15 +46,20 @@
 
         // --- CUSTOM HTML-ELEMENT EXAMPLE ---
         //Below we are creating our own custom element!
+        let tmpl = document.createElement('template');
+        tmpl.innerHTML = `<style>:host{display:inline-block;border:1px dotted green;margin-top:10px;contain:content}#example-foo-comp { color:green;padding:10px; }</style>
+            <div id="example-foo-comp">This is my own custom made element "foo-comp"<slot id="exampleSlot" name="foo-title"><h2>Test title</h2></slot></div>`;
+        
         customElements.define('foo-comp', class extends HTMLElement {
             constructor() {
                 super(); // always call super() first in the ctor.
 
                 // Attach a shadow root to <foo-comp>.
                 const shadowRoot = this.attachShadow({ mode: 'open' });
-                shadowRoot.innerHTML = `
-                    <style>:host{display:inline-block;border:1px dotted green;margin-top:10px;contain:content}#example-foo-comp { color:green;padding:10px; }</style>
-                    <div id="example-foo-comp">This is my own custom made element "foo-comp"<slot id="exampleSlot" name="foo-title"><h2>Test title</h2></slot></div>`;
+                shadowRoot.appendChild(tmpl.content.cloneNode(true));
+                // shadowRoot.innerHTML = `
+                //     <style>:host{display:inline-block;border:1px dotted green;margin-top:10px;contain:content}#example-foo-comp { color:green;padding:10px; }</style>
+                //     <div id="example-foo-comp">This is my own custom made element "foo-comp"<slot id="exampleSlot" name="foo-title"><h2>Test title</h2></slot></div>`;
             }
         });
         // --- END: CUSTOM HTML-ELEMENT EXAMPLE ---
