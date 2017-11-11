@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        div.outer li {
+            color: red;
+        }
+
+        div.outer {
+            border: solid 1px;
+            padding: 1em;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Shadow DOM example</h1>
+    <div class="outer">
+        <div id="welcomeMessage">Welcome!</div>
+        <!-- this element content will be replaced by shadow DOM -->
+        <div class="normalTree">Normal List
+            <ul>
+                <li>Item 1 get CSS styling</li>
+                <li>Item 2 get CSS styling</li>
+            </ul>
+        </div>
+    </div>
+
+    <foo-comp>
+        <h3 slot="foo-title">Users title in here...</h3>
+    </foo-comp>
+
+    <script type="text/javascript">
+        var supportsShadowDOMV1 = !!HTMLElement.prototype.attachShadow;
+        console.log('Your browser support Shadow DOM version 1? ==>', supportsShadowDOMV1);
+
+        // --- SHADOW DOM EXAMPLE ---
+        var shadowHost = document.querySelector("#welcomeMessage");
+        var shadowRoot = shadowHost.attachShadow({ mode: 'open' });
+
+        // Could also use appendChild():
+        shadowRoot.innerHTML = "<style>.shadowChild{color:blue;}</style><div class='shadowChild'>Shadow DOM with its own styling<ul><li>This item does not get outer styling</li><li>This item does not get outer styling</li></ul></div>";
+
+        // --- END: SHADOW DOM EXAMPLE ---
+
+        // --- CUSTOM HTML-ELEMENT EXAMPLE ---
+        //Below we are creating our own custom element!
+        customElements.define('foo-comp', class extends HTMLElement {
+            constructor() {
+                super(); // always call super() first in the ctor.
+
+                // Attach a shadow root to <foo-comp>.
+                const shadowRoot = this.attachShadow({ mode: 'open' });
+                shadowRoot.innerHTML = `
+                    <style>:host{display:inline-block;border:1px dotted green;margin-top:10px;contain:content}#example-foo-comp { color:green;padding:10px; }</style>
+                    <div id="example-foo-comp">This is my own custom made element "foo-comp"<slot id="exampleSlot" name="foo-title"><h2>Test title</h2></slot></div>`;
+            }
+        });
+        // --- END: CUSTOM HTML-ELEMENT EXAMPLE ---
+    </script>
+</body>
+
+</html>
